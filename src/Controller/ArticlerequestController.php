@@ -62,6 +62,11 @@ class ArticlerequestController extends CoreController {
         # Set Layout based on users theme
         $this->setThemeBasedLayout('articlerequest');
 
+        # Set Links for Breadcrumb
+        $this->layout()->aNavLinks = [
+            (object)['label'=>'Articlerequests'],
+        ];
+
         # Check license
         if(!$this->checkLicense('articlerequest')) {
             $this->flashMessenger()->addErrorMessage('You have no active license for articlerequest');
@@ -100,6 +105,12 @@ class ArticlerequestController extends CoreController {
     public function addAction() {
         # Set Layout based on users theme
         $this->setThemeBasedLayout('articlerequest');
+
+        # Add Links for Breadcrumb
+        $this->layout()->aNavLinks = [
+            (object)['label'=>'Articlerequests','href'=>'/articlerequest'],
+            (object)['label'=>'Add Articlerequest'],
+        ];
 
         # Check license
         if(!$this->checkLicense('articlerequest')) {
@@ -196,6 +207,12 @@ class ArticlerequestController extends CoreController {
             # Load Fields for View Form
             $this->setFormFields($this->sSingleForm);
 
+            # Add Links for Breadcrumb
+            $this->layout()->aNavLinks = [
+                (object)['label'=>'Articlerequests','href'=>'/articlerequest'],
+                (object)['label'=>'Edit Articlerequest'],
+            ];
+
             # Log Performance in DB
             $aMeasureEnd = getrusage();
             $this->logPerfomance('articlerequest-edit',$this->rutime($aMeasureEnd,CoreController::$aPerfomanceLogStart,"utime"),$this->rutime($aMeasureEnd,CoreController::$aPerfomanceLogStart,"stime"));
@@ -257,6 +274,12 @@ class ArticlerequestController extends CoreController {
             echo 'Articlerequest Not found';
             return false;
         }
+
+        # Add Links for Breadcrumb
+        $this->layout()->aNavLinks = [
+            (object)['label'=>'Articlerequests','href'=>'/articlerequest'],
+            (object)['label'=>'Articlerequest','label_append'=>$oArticlerequest->getLabel()],
+        ];
 
         # Attach Articlerequest Entity to Layout
         $this->setViewEntity($oArticlerequest);
