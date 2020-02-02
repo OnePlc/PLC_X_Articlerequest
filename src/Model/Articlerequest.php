@@ -187,33 +187,35 @@ class Articlerequest extends CoreEntityModel {
         # apply final matchings
         $aMatchedArticles = $aMatchingsByID;
 
-        # enforce state on articles
-        if(count($aMatchedArticles) > 0) {
-            # Check if state tag is present
-            $sTagKey = 'state';
-            $oTag = CoreController::$aCoreTables['core-tag']->select(['tag_key'=>$sTagKey]);
-            if(count($oTag) > 0) {
-                # check if enforce state option for request is active
-                $sState = CoreController::$aGlobalSettings['articlerequest-enforce-state'];
-                if($sState != '') {
-                    # enforce state for results
-                    $aEnforcedMatches = [];
-                    $oTag = $oTag->current();
-                    $oEntityTag = CoreController::$aCoreTables['core-entity-tag']->select(['tag_value' => $sState, 'tag_idfs' => $oTag->Tag_ID]);
+        # enforce state on articles if active
+        if(isset(CoreController::$aGlobalSettings['articlerequest-enforce-state'])) {
+            if (count($aMatchedArticles) > 0) {
+                # Check if state tag is present
+                $sTagKey = 'state';
+                $oTag = CoreController::$aCoreTables['core-tag']->select(['tag_key' => $sTagKey]);
+                if (count($oTag) > 0) {
+                    # check if enforce state option for request is active
+                    $sState = CoreController::$aGlobalSettings['articlerequest-enforce-state'];
+                    if ($sState != '') {
+                        # enforce state for results
+                        $aEnforcedMatches = [];
+                        $oTag = $oTag->current();
+                        $oEntityTag = CoreController::$aCoreTables['core-entity-tag']->select(['tag_value' => $sState, 'tag_idfs' => $oTag->Tag_ID]);
 
-                    # check if state exists for entity
-                    if (count($oEntityTag) > 0) {
-                        $oEntityTag = $oEntityTag->current();
-                        # compare state for all matches, only add matching
-                        foreach (array_keys($aMatchedArticles) as $sMatchKey) {
-                            $oMatch = $aMatchedArticles[$sMatchKey];
-                            if ($oMatch->getSelectFieldID('state_idfs') == $oEntityTag->Entitytag_ID) {
-                                $aEnforcedMatches[] = $oMatch;
+                        # check if state exists for entity
+                        if (count($oEntityTag) > 0) {
+                            $oEntityTag = $oEntityTag->current();
+                            # compare state for all matches, only add matching
+                            foreach (array_keys($aMatchedArticles) as $sMatchKey) {
+                                $oMatch = $aMatchedArticles[$sMatchKey];
+                                if ($oMatch->getSelectFieldID('state_idfs') == $oEntityTag->Entitytag_ID) {
+                                    $aEnforcedMatches[] = $oMatch;
+                                }
                             }
                         }
+                        # return curated results
+                        $aMatchedArticles = $aEnforcedMatches;
                     }
-                    # return curated results
-                    $aMatchedArticles = $aEnforcedMatches;
                 }
             }
         }
