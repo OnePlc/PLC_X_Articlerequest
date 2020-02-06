@@ -34,3 +34,6 @@ msgstr "Interessent"
 
 msgid "Choose Article & Close Request"
 msgstr "Maschine wählen & Gesuch schliessen"
+
+msgid "Please save Articlerequest to see matching results"
+msgstr "Bitte Gesuch speichern um Matching Resultate zu sehen"
