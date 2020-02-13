@@ -30,11 +30,25 @@ return [
                     'route' => '/articlerequest[/:action[/:id]]',
                     'constraints' => [
                         'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
-                        'id'     => '[0-9_-]+',
+                        'id'     => '[0-9]+',
                     ],
                     'defaults' => [
                         'controller' => Controller\ArticlerequestController::class,
                         'action'     => 'index',
+                    ],
+                ],
+            ],
+            'articlerequest-setup' => [
+                'type'    => Segment::class,
+                'options' => [
+                    'route' => '/articlerequest/setup[/:action[/:id]]',
+                    'constraints' => [
+                        'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+                        'id'     => '[0-9]+',
+                    ],
+                    'defaults' => [
+                        'controller' => Controller\InstallController::class,
+                        'action'     => 'checkdb',
                     ],
                 ],
             ],
@@ -48,6 +62,48 @@ return [
                     ],
                     'defaults' => [
                         'controller' => Controller\ApiController::class,
+                        'action'     => 'index',
+                    ],
+                ],
+            ],
+            'articlerequest-export' => [
+                'type'    => Segment::class,
+                'options' => [
+                    'route' => '/articlerequest/export[/:action[/:id]]',
+                    'constraints' => [
+                        'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+                        'id'     => '[0-9]+',
+                    ],
+                    'defaults' => [
+                        'controller' => Controller\ExportController::class,
+                        'action'     => 'index',
+                    ],
+                ],
+            ],
+            'articlerequest-search' => [
+                'type'    => Segment::class,
+                'options' => [
+                    'route' => '/articlerequest/search[/:action[/:id]]',
+                    'constraints' => [
+                        'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+                        'id'     => '[0-9]+',
+                    ],
+                    'defaults' => [
+                        'controller' => Controller\SearchController::class,
+                        'action'     => 'index',
+                    ],
+                ],
+            ],
+            'articlerequest-plugin' => [
+                'type'    => Segment::class,
+                'options' => [
+                    'route' => '/articlerequest/plugin[/:action[/:id]]',
+                    'constraints' => [
+                        'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+                        'id'     => '[0-9]+',
+                    ],
+                    'defaults' => [
+                        'controller' => Controller\PluginController::class,
                         'action'     => 'index',
                     ],
                 ],

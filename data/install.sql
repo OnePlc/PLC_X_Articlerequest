@@ -25,7 +25,8 @@ INSERT INTO `permission` (`permission_key`, `module`, `label`, `nav_label`, `nav
 ('index', 'OnePlace\\Articlerequest\\Controller\\ArticlerequestController', 'Index', 'Articlerequests', '/articlerequest', 1),
 ('list', 'OnePlace\\Articlerequest\\Controller\\ApiController', 'List', '', '', 1),
 ('view', 'OnePlace\\Articlerequest\\Controller\\ArticlerequestController', 'View', '', '', 0),
-('success', 'OnePlace\\Articlerequest\\Controller\\ArticlerequestController', 'Close as successful', '', '', 0);
+('dump', 'OnePlace\\Articlerequest\\Controller\\ExportController', 'Excel Dump', '', '', 0),
+('index', 'OnePlace\\Articlerequest\\Controller\\SearchController', 'Search', '', '', 0);
 
 --
 -- Form
@@ -50,7 +51,11 @@ INSERT INTO `core_form_tab` (`Tab_ID`, `form`, `title`, `subtitle`, `icon`, `cou
 INSERT INTO `core_form_button` (`Button_ID`, `label`, `icon`, `title`, `href`, `class`, `append`, `form`, `mode`, `filter_check`, `filter_value`) VALUES
 (NULL, 'Save Articlerequest', 'fas fa-save', 'Save Articlerequest', '#', 'primary saveForm', '', 'articlerequest-single', 'link', '', ''),
 (NULL, 'Edit Articlerequest', 'fas fa-edit', 'Edit Articlerequest', '/articlerequest/edit/##ID##', 'primary', '', 'articlerequest-view', 'link', '', ''),
-(NULL, 'Add Articlerequest', 'fas fa-plus', 'Add Articlerequest', '/articlerequest/add', 'primary', '', 'articlerequest-index', 'link', '', '');
+(NULL, 'Add Articlerequest', 'fas fa-plus', 'Add Articlerequest', '/articlerequest/add', 'primary', '', 'articlerequest-index', 'link', '', ''),
+(NULL, 'Export Articlerequests', 'fas fa-file-excel', 'Export Articlerequests', '/articlerequest/export', 'primary', '', 'articlerequest-index', 'link', '', ''),
+(NULL, 'Find Articlerequests', 'fas fa-searh', 'Find Articlerequests', '/articlerequest/search', 'primary', '', 'articlerequest-index', 'link', '', ''),
+(NULL, 'Export Articlerequests', 'fas fa-file-excel', 'Export Articlerequests', '#', 'primary initExcelDump', '', 'articlerequest-search', 'link', '', ''),
+(NULL, 'New Search', 'fas fa-searh', 'New Search', '/articlerequest/search', 'primary', '', 'articlerequest-search', 'link', '', '');
 
 --
 -- Fields
@@ -59,27 +64,11 @@ INSERT INTO `core_form_field` (`Field_ID`, `type`, `label`, `fieldkey`, `tab`, `
 (NULL, 'text', 'Name', 'label', 'articlerequest-base', 'articlerequest-single', 'col-md-3', '/articlerequest/view/##ID##', '', 0, 1, 0, '', '', '');
 
 --
--- Request Criteria
+-- User XP Activity
 --
-CREATE TABLE `articlerequest_criteria` (
-  `Criteria_ID` int(11) NOT NULL,
-  `criteria_entity_key` varchar(100) NOT NULL,
-  `label` varchar(255) NOT NULL,
-  `type` varchar(50) NOT NULL,
-  `compare_notice` tinyint(1) NOT NULL DEFAULT 0,
-  `articlerequest_field` varchar(150) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
-ALTER TABLE `articlerequest_criteria`
-  ADD PRIMARY KEY (`Criteria_ID`);
-
-ALTER TABLE `articlerequest_criteria`
-  MODIFY `Criteria_ID` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- Widget
---
-INSERT INTO `core_widget` (`Widget_ID`, `widget_name`, `label`, `permission`) VALUES
-(NULL, 'articlerequest_matching', 'Matching Results', 'index-Application\\Controller\\IndexController');
+INSERT INTO `user_xp_activity` (`Activity_ID`, `xp_key`, `label`, `xp_base`) VALUES
+(NULL, 'articlerequest-add', 'Add New Articlerequest', '50'),
+(NULL, 'articlerequest-edit', 'Edit Articlerequest', '5'),
+(NULL, 'articlerequest-export', 'Edit Articlerequest', '5');
 
 COMMIT;

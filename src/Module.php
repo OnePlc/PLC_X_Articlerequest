@@ -23,6 +23,7 @@ use Laminas\ModuleManager\ModuleManager;
 use Laminas\Session\Config\StandardConfig;
 use Laminas\Session\SessionManager;
 use Laminas\Session\Container;
+use Application\Controller\CoreEntityController;
 
 class Module {
     /**
@@ -69,17 +70,47 @@ class Module {
     public function getControllerConfig() : array {
         return [
             'factories' => [
+                # Articlerequest Main Controller
                 Controller\ArticlerequestController::class => function($container) {
                     $oDbAdapter = $container->get(AdapterInterface::class);
+                    $tableGateway = $container->get(Model\ArticlerequestTable::class);
                     return new Controller\ArticlerequestController(
                         $oDbAdapter,
                         $container->get(Model\ArticlerequestTable::class),
                         $container
                     );
                 },
+                # Api Plugin
                 Controller\ApiController::class => function($container) {
                     $oDbAdapter = $container->get(AdapterInterface::class);
                     return new Controller\ApiController(
+                        $oDbAdapter,
+                        $container->get(Model\ArticlerequestTable::class),
+                        $container
+                    );
+                },
+                # Export Plugin
+                Controller\ExportController::class => function($container) {
+                    $oDbAdapter = $container->get(AdapterInterface::class);
+                    return new Controller\ExportController(
+                        $oDbAdapter,
+                        $container->get(Model\ArticlerequestTable::class),
+                        $container
+                    );
+                },
+                # Search Plugin
+                Controller\SearchController::class => function($container) {
+                    $oDbAdapter = $container->get(AdapterInterface::class);
+                    return new Controller\SearchController(
+                        $oDbAdapter,
+                        $container->get(Model\ArticlerequestTable::class),
+                        $container
+                    );
+                },
+                # Installer
+                Controller\InstallController::class => function($container) {
+                    $oDbAdapter = $container->get(AdapterInterface::class);
+                    return new Controller\InstallController(
                         $oDbAdapter,
                         $container->get(Model\ArticlerequestTable::class),
                         $container

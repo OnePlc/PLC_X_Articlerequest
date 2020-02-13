@@ -1,1 +1,8 @@
-<?= $this->partial('partial/basicform', ['sFormName'=>$sFormName,'oItem'=>$oArticlerequest]); ?>
+<?php
+$aPartialData = ['sFormName'=>$sFormName,'oItem'=>$oItem];
+if(isset($aPartialExtraData)) {
+    $aPartialData['aPartialExtraData'] = $aPartialExtraData;
+}
+?>
+<?= $this->partial('partial/formheader',['sTitle'=>'Edit Articlerequest '.$oItem->getLabel()]) ?>
+<?= $this->partial('partial/basicform', $aPartialData); ?>

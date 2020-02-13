@@ -17,20 +17,20 @@ declare(strict_types=1);
 
 namespace OnePlace\Articlerequest\Controller;
 
-use Application\Controller\CoreController;
+use Application\Controller\CoreEntityController;
 use Application\Model\CoreEntityModel;
 use OnePlace\Articlerequest\Model\Articlerequest;
 use OnePlace\Articlerequest\Model\ArticlerequestTable;
 use Laminas\View\Model\ViewModel;
 use Laminas\Db\Adapter\AdapterInterface;
 
-class ArticlerequestController extends CoreController {
+class ArticlerequestController extends CoreEntityController {
     /**
      * Articlerequest Table Object
      *
      * @since 1.0.0
      */
-    private $oTableGateway;
+    protected $oTableGateway;
 
     /**
      * ArticlerequestController constructor.
@@ -59,41 +59,9 @@ class ArticlerequestController extends CoreController {
      * @return ViewModel - View Object with Data from Controller
      */
     public function indexAction() {
-        # Set Layout based on users theme
-        $this->setThemeBasedLayout('articlerequest');
-
-        # Set Links for Breadcrumb
-        $this->layout()->aNavLinks = [
-            (object)['label'=>'Articlerequests'],
-        ];
-
-        # Check license
-        if(!$this->checkLicense('articlerequest')) {
-            $this->flashMessenger()->addErrorMessage('You have no active license for articlerequest');
-            $this->redirect()->toRoute('home');
-        }
-
-        # Add Buttons for breadcrumb
-        $this->setViewButtons('articlerequest-index');
-
-        # Set Table Rows for Index
-        $this->setIndexColumns('articlerequest-index');
-
-        # Get Paginator
-        $oPaginator = $this->oTableGateway->fetchAll(true);
-        $iPage = (int) $this->params()->fromQuery('page', 1);
-        $iPage = ($iPage < 1) ? 1 : $iPage;
-        $oPaginator->setCurrentPageNumber($iPage);
-        $oPaginator->setItemCountPerPage(3);
-
-        # Log Performance in DB
-        $aMeasureEnd = getrusage();
-        $this->logPerfomance('articlerequest-index',$this->rutime($aMeasureEnd,CoreController::$aPerfomanceLogStart,"utime"),$this->rutime($aMeasureEnd,CoreController::$aPerfomanceLogStart,"stime"));
-
-        return new ViewModel([
-            'sTableName'=>'articlerequest-index',
-            'aItems'=>$oPaginator,
-        ]);
+        # You can just use the default function and customize it via hooks
+        # or replace the entire function if you need more customization
+        return $this->generateIndexView('articlerequest');
     }
 
     /**
@@ -103,63 +71,17 @@ class ArticlerequestController extends CoreController {
      * @return ViewModel - View Object with Data from Controller
      */
     public function addAction() {
-        # Set Layout based on users theme
-        $this->setThemeBasedLayout('articlerequest');
-
-        # Add Links for Breadcrumb
-        $this->layout()->aNavLinks = [
-            (object)['label'=>'Articlerequests','href'=>'/articlerequest'],
-            (object)['label'=>'Add Articlerequest'],
-        ];
-
-        # Check license
-        if(!$this->checkLicense('articlerequest')) {
-            $this->flashMessenger()->addErrorMessage('You have no active license for articlerequest');
-            $this->redirect()->toRoute('home');
-        }
-
-        # Get Request to decide wether to save or display form
-        $oRequest = $this->getRequest();
-
-        # Display Add Form
-        if(!$oRequest->isPost()) {
-            # Add Buttons for breadcrumb
-            $this->setViewButtons('articlerequest-single');
-
-            # Load Tabs for View Form
-            $this->setViewTabs($this->sSingleForm);
-
-            # Load Fields for View Form
-            $this->setFormFields($this->sSingleForm);
-
-            # Log Performance in DB
-            $aMeasureEnd = getrusage();
-            $this->logPerfomance('articlerequest-add',$this->rutime($aMeasureEnd,CoreController::$aPerfomanceLogStart,"utime"),$this->rutime($aMeasureEnd,CoreController::$aPerfomanceLogStart,"stime"));
-
-            return new ViewModel([
-                'sFormName' => $this->sSingleForm,
-            ]);
-        }
-
-        # Get and validate Form Data
-        $aFormData = $this->parseFormData($_REQUEST);
-
-        # Save Add Form
-        $oArticlerequest = new Articlerequest($this->oDbAdapter);
-        $oArticlerequest->exchangeArray($aFormData);
-        $iArticlerequestID = $this->oTableGateway->saveSingle($oArticlerequest);
-        $oArticlerequest = $this->oTableGateway->getSingle($iArticlerequestID);
-
-        # Save Multiselect
-        $this->updateMultiSelectFields($_REQUEST,$oArticlerequest,'articlerequest-single');
-
-        # Log Performance in DB
-        $aMeasureEnd = getrusage();
-        $this->logPerfomance('articlerequest-save',$this->rutime($aMeasureEnd,CoreController::$aPerfomanceLogStart,"utime"),$this->rutime($aMeasureEnd,CoreController::$aPerfomanceLogStart,"stime"));
-
-        # Display Success Message and View New Articlerequest
-        $this->flashMessenger()->addSuccessMessage('Articlerequest successfully created');
-        return $this->redirect()->toRoute('articlerequest',['action'=>'view','id'=>$iArticlerequestID]);
+        /**
+         * You can just use the default function and customize it via hooks
+         * or replace the entire function if you need more customization
+         *
+         * Hooks available:
+         *
+         * articlerequest-add-before (before show add form)
+         * articlerequest-add-before-save (before save)
+         * articlerequest-add-after-save (after save)
+         */
+        return $this->generateAddView('articlerequest');
     }
 
     /**
@@ -169,83 +91,17 @@ class ArticlerequestController extends CoreController {
      * @return ViewModel - View Object with Data from Controller
      */
     public function editAction() {
-        # Set Layout based on users theme
-        $this->setThemeBasedLayout('articlerequest');
-
-        # Check license
-        if(!$this->checkLicense('articlerequest')) {
-            $this->flashMessenger()->addErrorMessage('You have no active license for articlerequest');
-            $this->redirect()->toRoute('home');
-        }
-
-        # Get Request to decide wether to save or display form
-        $oRequest = $this->getRequest();
-
-        # Display Edit Form
-        if(!$oRequest->isPost()) {
-
-            # Get Articlerequest ID from URL
-            $iArticlerequestID = $this->params()->fromRoute('id', 0);
-
-            # Try to get Articlerequest
-            try {
-                $oArticlerequest = $this->oTableGateway->getSingle($iArticlerequestID);
-            } catch (\RuntimeException $e) {
-                echo 'Articlerequest Not found';
-                return false;
-            }
-
-            # Attach Articlerequest Entity to Layout
-            $this->setViewEntity($oArticlerequest);
-
-            # Add Buttons for breadcrumb
-            $this->setViewButtons('articlerequest-single');
-
-            # Load Tabs for View Form
-            $this->setViewTabs($this->sSingleForm);
-
-            # Load Fields for View Form
-            $this->setFormFields($this->sSingleForm);
-
-            # Add Links for Breadcrumb
-            $this->layout()->aNavLinks = [
-                (object)['label'=>'Articlerequests','href'=>'/articlerequest'],
-                (object)['label'=>'Edit Articlerequest'],
-            ];
-
-            # Log Performance in DB
-            $aMeasureEnd = getrusage();
-            $this->logPerfomance('articlerequest-edit',$this->rutime($aMeasureEnd,CoreController::$aPerfomanceLogStart,"utime"),$this->rutime($aMeasureEnd,CoreController::$aPerfomanceLogStart,"stime"));
-
-            return new ViewModel([
-                'sFormName' => $this->sSingleForm,
-                'oArticlerequest' => $oArticlerequest,
-            ]);
-        }
-
-        $iArticlerequestID = $oRequest->getPost('Item_ID');
-        $oArticlerequest = $this->oTableGateway->getSingle($iArticlerequestID);
-
-        # Update Articlerequest with Form Data
-        $oArticlerequest = $this->attachFormData($_REQUEST,$oArticlerequest);
-
-        # Save Articlerequest
-        $iArticlerequestID = $this->oTableGateway->saveSingle($oArticlerequest);
-
-        $this->layout('layout/json');
-
-        $aFormData = $this->parseFormData($_REQUEST);
-
-        # Save Multiselect
-        $this->updateMultiSelectFields($aFormData,$oArticlerequest,'articlerequest-single');
-
-        # Log Performance in DB
-        $aMeasureEnd = getrusage();
-        $this->logPerfomance('articlerequest-save',$this->rutime($aMeasureEnd,CoreController::$aPerfomanceLogStart,"utime"),$this->rutime($aMeasureEnd,CoreController::$aPerfomanceLogStart,"stime"));
-
-        # Display Success Message and View New User
-        $this->flashMessenger()->addSuccessMessage('Articlerequest successfully saved');
-        return $this->redirect()->toRoute('articlerequest',['action'=>'view','id'=>$iArticlerequestID]);
+        /**
+         * You can just use the default function and customize it via hooks
+         * or replace the entire function if you need more customization
+         *
+         * Hooks available:
+         *
+         * articlerequest-edit-before (before show edit form)
+         * articlerequest-edit-before-save (before save)
+         * articlerequest-edit-after-save (after save)
+         */
+        return $this->generateEditView('articlerequest');
     }
 
     /**
@@ -255,120 +111,14 @@ class ArticlerequestController extends CoreController {
      * @return ViewModel - View Object with Data from Controller
      */
     public function viewAction() {
-        # Set Layout based on users theme
-        $this->setThemeBasedLayout('articlerequest');
-
-        # Check license
-        if(!$this->checkLicense('articlerequest')) {
-            $this->flashMessenger()->addErrorMessage('You have no active license for articlerequest');
-            $this->redirect()->toRoute('home');
-        }
-
-        # Get Articlerequest ID from URL
-        $iArticlerequestID = $this->params()->fromRoute('id', 0);
-
-        # Try to get Articlerequest
-        try {
-            $oArticlerequest = $this->oTableGateway->getSingle($iArticlerequestID);
-        } catch (\RuntimeException $e) {
-            echo 'Articlerequest Not found';
-            return false;
-        }
-
-        # Add Links for Breadcrumb
-        $this->layout()->aNavLinks = [
-            (object)['label'=>'Articlerequests','href'=>'/articlerequest'],
-            (object)['label'=>'Articlerequest','label_append'=>$oArticlerequest->getLabel()],
-        ];
-
-        # Attach Articlerequest Entity to Layout
-        $this->setViewEntity($oArticlerequest);
-
-        # Add Buttons for breadcrumb
-        $this->setViewButtons('articlerequest-view');
-
-        # Load Tabs for View Form
-        $this->setViewTabs($this->sSingleForm);
-
-        # Load Fields for View Form
-        $this->setFormFields($this->sSingleForm);
-
         /**
-         * @addedtoarticle
-         * @requires 1.0.5
-         * @campatibleto master-dev
+         * You can just use the default function and customize it via hooks
+         * or replace the entire function if you need more customization
+         *
+         * Hooks available:
+         *
+         * articlerequest-view-before
          */
-        $aPartialData = [
-            'aMatchingResults'=>$oArticlerequest->getMatchingResults(),
-            'aViewCriterias' =>$oArticlerequest->getMatchingCriterias(),
-        ];
-        $this->setPartialData('matching',$aPartialData);
-        /**
-         * @addedtoarticleend
-         */
-
-        # Log Performance in DB
-        $aMeasureEnd = getrusage();
-        $this->logPerfomance('articlerequest-view',$this->rutime($aMeasureEnd,CoreController::$aPerfomanceLogStart,"utime"),$this->rutime($aMeasureEnd,CoreController::$aPerfomanceLogStart,"stime"));
-
-        return new ViewModel([
-            'sFormName'=>$this->sSingleForm,
-            'oArticlerequest'=>$oArticlerequest,
-        ]);
+        return $this->generateViewView('articlerequest');
     }
-
-    /**
-     * @addedtoarticle
-     * @requires 1.0.5
-     * @campatibleto master-dev
-     */
-    /**
-     * Close Request as successful
-     *
-     * @since 1.0.0
-     */
-    public function successAction() {
-        $aInfo = explode('-',$this->params()->fromRoute('id','0-0'));
-        $iRequestID = $aInfo[0];
-        $iArticleID = $aInfo[1];
-
-        # Check license
-        if(!$this->checkLicense('articlerequest')) {
-            $this->flashMessenger()->addErrorMessage('You have no active license for articlerequest');
-            $this->redirect()->toRoute('home');
-        }
-
-        try {
-            $oArticleTable = CoreController::$oServiceManager->get(\OnePlace\Article\Model\ArticleTable::class);
-        } catch(\RuntimeException $e) {
-            echo 'could not load article table';
-            return false;
-        }
-
-        # check if state tag is active
-        $oTag = CoreController::$aCoreTables['core-tag']->select(['tag_key'=>'state']);
-        if(count($oTag) > 0) {
-            $oTagState = $oTag->current();
-            # check if we find success state tag for article request
-            $oEntityTagRequest = CoreController::$aCoreTables['core-entity-tag']->select(['tag_value'=>'success','tag_idfs'=>$oTagState->Tag_ID,'entity_form_idfs'=>'articlerequest-single']);
-            if(count($oEntityTagRequest) > 0) {
-                $oEntityTagSuccess = $oEntityTagRequest->current();
-                $this->oTableGateway->updateAttribute('state_idfs',$oEntityTagSuccess->Entitytag_ID,'Articlerequest_ID',$iRequestID);
-                $this->oTableGateway->updateAttribute('article_idfs',$iArticleID,'Articlerequest_ID',$iRequestID);
-            }
-            # check if we find sold state tag for article
-            $oEntityTagArticle = CoreController::$aCoreTables['core-entity-tag']->select(['tag_value'=>'sold','tag_idfs'=>$oTagState->Tag_ID,'entity_form_idfs'=>'article-single']);
-            if(count($oEntityTagArticle) > 0) {
-                $oEntityTagSold = $oEntityTagArticle->current();
-                $oArticleTable->updateAttribute('state_idfs',$oEntityTagSold->Entitytag_ID,'Article_ID',$iRequestID);
-            }
-        }
-
-        # Display Success Message and View New Articlerequest
-        $this->flashMessenger()->addSuccessMessage('Articlerequest successfully closed');
-        return $this->redirect()->toRoute('articlerequest',['action'=>'view','id'=>$iRequestID]);
-    }
-    /**
-     * @addedtoarticleend
-     */
 }
